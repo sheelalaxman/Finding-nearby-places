@@ -9,12 +9,24 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.SeekBar
+import com.example.laxman.findnearbyplaces.R.id.lati
+import com.example.laxman.findnearbyplaces.R.id.longi
+import com.example.laxman.findnearbyplaces.bean.PlacesBean
+import com.example.laxman.findnearbyplaces.bean.ResultsItem
 import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.indiview.view.*
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.Serializable
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        getLocation()
         loc_pin.setOnClickListener {
 
             var placepicker = PlacePicker.IntentBuilder()
@@ -47,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         getPlaces.setOnClickListener {
 
 
-           /* var r = Retrofit.Builder().
+            var r = Retrofit.Builder().
                 addConverterFactory(GsonConverterFactory.create()).
                 baseUrl("https://maps.googleapis.com/").
                 build()
@@ -78,6 +91,7 @@ class MainActivity : AppCompatActivity() {
                                     geometry.location.lat)
                                 i.putExtra("longi",places_list!!.get(pos).
                                     geometry.location.lng)
+                                i.putExtra("Places_list",places_list as Serializable)
                                 i.putExtra("our_lati",
                                     lati.text.toString().toDouble())
                                 i.putExtra("our_longi",
@@ -96,11 +110,9 @@ class MainActivity : AppCompatActivity() {
 
             })
 
-        }*/
+        }
 
         }
-        getLocation()
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -114,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocation() {
+    fun getLocation() {
         var lmanager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         lmanager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         lmanager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000,1.toFloat(),object :LocationListener{
